@@ -12,7 +12,7 @@ DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
 VK_URL=https://api.vk.ru/method/wall.get?access_token=YOUR_VK_APP_SERVICE_TOKEN&v=5.199&owner_id=-193489972
 
 ```
-q   
+
 ## Запуск
 
 ```shell
