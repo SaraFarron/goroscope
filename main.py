@@ -6,13 +6,30 @@ import requests
 from const import *
 
 
-def get_correct_sign(text: str, choice: str):
+def split_text(text: str):
+    texts = text.split("\n\n")
+    if len(texts) == 1:
+        texts = text.split("\n \n")
+    return texts
+
+
+def get_response(text: str, choice: str):
     choice = choice.lower()
-    texts = text.split("\n \n")
-    if choice in SIGNS:
-        for text in texts:
-            if text.startswith(SIGNS[choice]):
-                return text
+    texts = split_text(text)
+
+    if len(texts) == 1:
+        return WRONG_SPLITTER
+
+    if choice not in SIGNS:
+        print(f"WRONG_SIGN sign: {choice}")
+        return WRONG_SIGN
+
+    for text in texts:
+        if text.startswith(SIGNS[choice]):
+            print(f"OK text starts with {SIGNS[choice]}\n{text}")
+            return text
+
+    print(f"NO_SIGN sign: {choice} text: {texts}")
     return NO_SIGN
 
 
@@ -21,10 +38,12 @@ def get_goroscope(sign: str):
         response = requests.get(os.getenv("VK_URL")).json()
     except requests.RequestException:
         return VK_ERROR
+    except Exception:
+        return CREATOR_ERROR
 
     # mb add detect is a post is a goroscope?
     text = response["response"]["items"][1]["text"]
-    result = get_correct_sign(text, sign)
+    result = get_response(text, sign)
 
     return result
 
@@ -40,8 +59,11 @@ class Client(discord.Client):
             return
 
         if client.user.mentioned_in(message):
-            print(f"User {message.author.name} texted '{message.content}'")
-            sign = message.content.split(" ")
+            print(
+                f"DEBUG User {message.author.name} texted '{message.content}'"
+            )
+            message_text = message.content.replace("  ", " ")
+            sign = message_text.split(" ")
             if len(sign) >= 2:
                 await message.reply(get_goroscope(sign[1]))
             else:
