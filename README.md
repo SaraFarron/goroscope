@@ -17,7 +17,7 @@ VK_URL=https://api.vk.ru/method/wall.get?access_token=YOUR_VK_APP_SERVICE_TOKEN&
 
 ```shell
 docker build . -t goroscope
-docker run --env-file .env --name goroscope goroscope
+docker run --env-file .env --name goroscope goroscope --restart always
 ```
 или
 
